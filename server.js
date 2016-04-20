@@ -3,7 +3,36 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+var mongoose = require('mongoose');
+var flash = require('connect-flash');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var passport = require('passport');
+var morgan = require('morgan');
+var config = require('./config/database');
 
+//databes connection
+mongoose.connect(config.database);
+
+require('./config/passport')(passport); // pass passport for configuration
+
+//gettting requests
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+//logs on terminal
+app.use(morgan('dev'));
+app.use(cookieParser());//for cookies
+
+app.set('view engine', 'ejs');  //for randering templates
+
+app.use(session({ secret: 'lacucarachalacucaracha' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+require('./app/routs.js')(app, passport);
 
 users = [];
 connections = [];
@@ -12,9 +41,9 @@ server.listen(process.env.PORT || 3000);
 
 console.log('server running');
 
-app.get('/',function(req,res){
-     res.sendFile(__dirname + '/index.html')
-});
+
+
+
 // on connection
 io.sockets.on('connection',function(socket){
     connections.push(socket);
@@ -42,6 +71,8 @@ io.sockets.on('connection',function(socket){
         users.push(socket.username);
         updateUsers();
     });
+
+
 function updateUsers(){
     io.sockets.emit('get users', users);
 }

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>testchat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <style>
+        body{
+            margin-top: 30px;
+        }
+        textarea{
+            float: left;
+        }
+        #messageArea{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="userFormArea" class="row">
+        <div class="col-md-12">
+            <form id="userForm">
+                <div class="form-group">
+                    <label>enter username</label>
+                    <input type="text" class="formControl" id="username">
+                    <input type="submit" class="btn btn-primary" value="Login">
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <div class="row" id="messageArea">
+        <div class="col-md-4">
+            <div class="well">
+                <h3>Users</h3>
+                <ul class="list-group" id="users">
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="chat" id="chat">
+
+            </div>
+            <form id="messageForm">
+                <div class="form-group">
+                    <label>Enter Message</label>
+                       <textarea name="" id="message" class="form-control" >
+                       </textarea>
+                    <br />
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>$(function(){
+        var socket = io.connect();
+        var $messageForm = $('#messageForm');
+        var $message = $('#message');
+        var $chat = $('#chat');
+        var $users = $('#users');
+        var $username = $('#username');
+        var $userForm = $('#userForm');
+        var $userFormarea = $("#userFormArea");
+        var $messageArea = $('#messageArea');
+
+
+        //messages
+        $messageForm.submit(function(e){
+            e.preventDefault();
+            socket.emit('send message',$message.val());
+            $message.val('');
+        });
+
+        //userFormsubmition
+        $userForm.submit(function(e){
+            e.preventDefault();
+            socket.emit('user login',$username.val(),function(data){
+                if(data){
+                    $userFormarea.hide();
+                    $messageArea.show();
+
+                }
+            });
+            $username.val('');
+        });
+
+        socket.on('new message', function(data){
+            $chat.append('<div class="well">'+ data.msg +'</div>');
+        })
+        socket.on('get users',function(data){
+            var list = '';
+            for(var i= 0;i<data.length;i++) {
+                list += '<li class="list-group-item">'+ data[i] +'</li>'
+            }
+            $users.html(list);
+        });
+    });
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+</html>

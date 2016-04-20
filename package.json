@@ -7,8 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "socket.io": "*",
-    "express": "*"
+    "bcrypt-nodejs": "latest",
+    "body-parser": "~1.0.0",
+    "connect-flash": "~0.1.1",
+    "cookie-parser": "~1.0.0",
+    "ejs": "^2.4.1",
+    "express": "*",
+    "express-session": "~1.0.0",
+    "method-override": "~1.0.0",
+    "mongoose": "^4.4.12",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "socket.io": "*"
   },
   "author": "",
   "license": "ISC",
