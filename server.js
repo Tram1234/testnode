@@ -10,7 +10,10 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var passport = require('passport');
 var morgan = require('morgan');
-var config = require('./config/database');
+var config = require('./config/database.js');
+
+users = [];
+connections = [];
 
 //databes connection
 mongoose.connect(config.database);
@@ -24,7 +27,7 @@ app.use(bodyParser.json());
 //logs on terminal
 app.use(morgan('dev'));
 app.use(cookieParser());//for cookies
-
+app.use(bodyParser());  //info from html
 app.set('view engine', 'ejs');  //for randering templates
 
 app.use(session({ secret: 'lacucarachalacucaracha' }));
@@ -34,8 +37,7 @@ app.use(flash());
 
 require('./app/routs.js')(app, passport);
 
-users = [];
-connections = [];
+
 
 server.listen(process.env.PORT || 3000);
 
@@ -61,7 +63,7 @@ io.sockets.on('connection',function(socket){
     //on message
     socket.on('send message',function(data){
         console.log(data);
-      io.sockets.emit('new message' , {msg:data});
+        io.sockets.emit('new message' , {msg:data});
     });
     //onLogin
     socket.on('user login',function(data,callback){
@@ -71,9 +73,7 @@ io.sockets.on('connection',function(socket){
         users.push(socket.username);
         updateUsers();
     });
-
-
-function updateUsers(){
-    io.sockets.emit('get users', users);
-}
+    function updateUsers(){
+        io.sockets.emit('get users', users);
+    }
 });
