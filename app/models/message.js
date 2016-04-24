@@ -1,13 +1,12 @@
-var mongoose = require('mongoose');
+var restful = require('node-restful');
+var mongoose = restful.mongoose;
 
-
+//Message schema
 var messageSchema = new mongoose.Schema({
-    chatMessage:{
-        type:String,
-        requiired:true
-    },
+
+    text:String
 
 
-});
+},{ versionKey: false });
 
-module.exports = mongoose.model('Message',messageSchema);
+module.exports  = restful.model('message',messageSchema);

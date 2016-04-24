@@ -12,6 +12,7 @@ var passport = require('passport');
 var morgan = require('morgan');
 var config = require('./config/database.js');
 
+
 users = [];
 connections = [];
 
@@ -20,23 +21,25 @@ mongoose.connect(config.database);
 
 require('./config/passport')(passport); // pass passport for configuration
 
-//gettting requests
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+
+
 
 //logs on terminal
 app.use(morgan('dev'));
 app.use(cookieParser());//for cookies
-app.use(bodyParser());  //info from html
+app.use(bodyParser.urlencoded({extended:false}));  //info from html
+app.use(bodyParser.json());
 app.set('view engine', 'ejs');  //for randering templates
-
 app.use(session({ secret: 'lacucarachalacucaracha' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+
+
 require('./app/routs.js')(app, passport);
 
+require('./apiRouts/api.js')(app);
 
 
 server.listen(process.env.PORT || 3000);

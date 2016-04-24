@@ -3,7 +3,7 @@ var bcrypt = require('bcrypt-nodejs');
 
 
 
-// shema defenition
+// User schema
 
 var userSchema = new mongoose.Schema({
     local          : {
